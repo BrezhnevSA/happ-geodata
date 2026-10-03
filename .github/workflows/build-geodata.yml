@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
   schedule:
-    # 4 раза в сутки
     - cron: "30 3,9,15,21 * * *"
 
 permissions:
@@ -20,24 +19,24 @@ jobs:
 
     steps:
       # ----------------------------------------------------------
-      # OUR REPOSITORY
+      # REPOSITORY
       # ----------------------------------------------------------
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # ----------------------------------------------------------
       # GEOSITE
       # ----------------------------------------------------------
 
       - name: Checkout domain-list-community
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: v2fly/domain-list-community
           path: community
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version-file: community/go.mod
           cache: false
@@ -47,7 +46,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Список заблокированных доменов community.antifilter.download
           curl \
             --fail \
             --location \
@@ -55,7 +53,6 @@ jobs:
             "https://community.antifilter.download/list/domains.lst" \
             --output community/data/antifilter-download-community
 
-          # re:filter
           curl \
             --fail \
             --location \
@@ -63,7 +60,6 @@ jobs:
             "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/main/domains_all.lst" \
             --output community/data/refilter
 
-          # Доступные только из РФ
           curl \
             --fail \
             --location \
@@ -71,7 +67,6 @@ jobs:
             "https://raw.githubusercontent.com/runetfreedom/russia-domains-list/main/ru-available-only-inside" \
             --output community/data/ru-available-only-inside
 
-          # Аналог geosite:ru-blocked от RunetFreedom
           cat > community/data/ru-blocked <<'EOF'
           include:antifilter-download-community
           include:refilter
@@ -100,7 +95,7 @@ jobs:
       # ----------------------------------------------------------
 
       - name: Checkout GeoIP tool
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: v2fly/geoip
           path: geoip-tool
@@ -112,7 +107,7 @@ jobs:
 
           cd geoip-tool
 
-          go run ./ convert \
+          go run ./ \
             -c ../geoip-config.json
 
           cd ..
@@ -120,7 +115,7 @@ jobs:
           test -s publish/geoip.dat
 
       # ----------------------------------------------------------
-      # HASHES / INFO
+      # CHECKSUMS
       # ----------------------------------------------------------
 
       - name: Generate checksums
@@ -138,6 +133,7 @@ jobs:
           du -h geosite.dat geoip.dat
 
           echo
+          echo "Checksums:"
           cat geosite.dat.sha256sum
           cat geoip.dat.sha256sum
 
@@ -155,6 +151,7 @@ jobs:
           cd publish
 
           git init
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
@@ -170,5 +167,50 @@ jobs:
 
           git push \
             --force \
-            --set-upstream \
             origin release
+
+      # ----------------------------------------------------------
+      # GITHUB RELEASE
+      # ----------------------------------------------------------
+
+      - name: Publish latest GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          FILES=(
+            "publish/geosite.dat"
+            "publish/geoip.dat"
+            "publish/geosite.dat.sha256sum"
+            "publish/geoip.dat.sha256sum"
+          )
+
+          if gh release view latest >/dev/null 2>&1; then
+
+            echo "Updating existing latest release..."
+
+            gh release upload \
+              latest \
+              "${FILES[@]}" \
+              --clobber
+
+            gh release edit \
+              latest \
+              --title "HAPP geodata - latest" \
+              --notes "Automatically updated: $(date -u +'%Y-%m-%d %H:%M UTC')"
+
+          else
+
+            echo "Creating latest release..."
+
+            gh release create \
+              latest \
+              "${FILES[@]}" \
+              --target main \
+              --title "HAPP geodata - latest" \
+              --notes "Automatically generated geodata for HAPP." \
+              --latest
+
+          fi
