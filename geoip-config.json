@@ -1,0 +1,28 @@
+{
+  "input": [
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "add",
+      "args": {
+        "uri": "https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/geoip.dat",
+        "wantedList": [
+          "ru",
+          "ru-blocked",
+          "ru-blocked-community",
+          "re-filter",
+          "telegram"
+        ]
+      }
+    }
+  ],
+  "output": [
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "outputDir": "../publish",
+        "outputName": "geoip.dat"
+      }
+    }
+  ]
+}
