@@ -1,0 +1,19 @@
+[
+  {
+    "name": "geosite.dat",
+    "mode": "allowlist",
+    "lists": [
+      "private",
+      "ru-available-only-inside",
+      "category-ru",
+      "ru-blocked",
+      "youtube",
+      "telegram",
+      "category-ai-!cn",
+      "discord",
+      "meta",
+      "twitter",
+      "category-ads-all"
+    ]
+  }
+]
