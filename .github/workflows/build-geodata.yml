@@ -100,6 +100,15 @@ jobs:
           repository: v2fly/geoip
           path: geoip-tool
 
+      - name: Setup Go for GeoIP
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: geoip-tool/go.mod
+          cache: false
+
+      - name: Show Go version
+        run: go version
+
       - name: Build minimal geoip.dat
         shell: bash
         run: |
