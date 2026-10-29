@@ -6,6 +6,8 @@
       "private",
       "ru-available-only-inside",
       "category-ru",
+      "category-ecommerce-ru",
+      "category-gov-ru",
       "ru-blocked",
       "youtube",
       "telegram",
@@ -13,6 +15,8 @@
       "discord",
       "meta",
       "twitter",
+      "samsung",
+      "google",
       "category-ads-all"
     ]
   }
