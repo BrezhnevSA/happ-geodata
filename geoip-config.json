@@ -10,7 +10,9 @@
           "ru-blocked",
           "ru-blocked-community",
           "re-filter",
-          "telegram"
+          "telegram",
+          "google",
+          "private"
         ]
       }
     }
