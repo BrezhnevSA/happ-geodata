@@ -72,6 +72,14 @@ jobs:
           include:refilter
           EOF
 
+      - name: Generate foreign IP checker category
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/build-ip-check-foreign.py \
+            --data-dir community/data \
+            --exclude-file ip-check-ru-exclude.txt \
+            --report publish/ip-check-foreign.txt
       - name: Build minimal geosite.dat
         shell: bash
         run: |

@@ -1,0 +1,16 @@
+# Russian-oriented domains using a non-Russian suffix that should stay DIRECT.
+# Keep one domain per line. Subdomains are excluded as well.
+# .ru/.su/.рф/.рус are excluded automatically and need not be listed.
+# Do not add foreign-owned services merely because they have a Russian UI.
+
+# Russian IP lookup/diagnostic services on international domains
+ip2ruscity.com
+ip.comss.net
+ipv4-internet.yandex.net
+ipv4.internet.yandex.net
+ipv6-internet.yandex.net
+ipv6.internet.yandex.net
+
+# Conservative exclusions for Russian-oriented / ambiguous international domains
+2ip.io
+whoer.net
